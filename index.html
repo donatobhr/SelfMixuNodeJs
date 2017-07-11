@@ -1,0 +1,38 @@
+<html>
+<head>
+  <style type="text/css">
+    #messages { padding: 0px; list-style-type: none;}
+    #messages li { padding: 2px 0px; border-bottom: 1px solid #ccc; }
+  </style>
+  <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  $(function(){
+    var socket = io.connect();
+    socket.on('connect', function () {
+      socket.on('message', function(message) {
+        $('#messages').append($('<li></li>').text(message));
+      });
+      socket.on('disconnect', function() {
+        $('#messages').append('<li>Disconnected</li>');
+      });
+    });
+
+    var el = $('#chatmsg');
+    $('#chatmsg').keypress(function(e) {
+      if(e.which == 13) {
+        e.preventDefault();
+        socket.send(el.val());
+        $('#messages').append($('<li></li>').text(el.val()));
+        el.val('');
+      }
+    });
+  });
+  </script>
+</head>
+<body>
+ <ul id="messages"></ul>
+ <hr>
+ <input type="text" id="chatmsg">
+</body>
+</html>
